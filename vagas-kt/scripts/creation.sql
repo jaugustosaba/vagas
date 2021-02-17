@@ -1,0 +1,3 @@
+CREATE ROLE vagas WITH LOGIN PASSWORD 'vagas';
+
+CREATE DATABASE vagas OWNER vagas;
