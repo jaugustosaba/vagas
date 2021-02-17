@@ -1,7 +1,8 @@
 # vagas
-Vagas Code Challenge
+Vagas API
 
 ## Kotlin solution
 
-* [Kotlin](/vagas-kt)
-* [README](/vagas-kt/README.md)
+Quick links:
+* [Kotlin subtree directory](/vagas-kt)
+* [README file](/vagas-kt/README.md)
