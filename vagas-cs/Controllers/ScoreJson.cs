@@ -17,7 +17,7 @@ namespace Vagas.Controller
         public long Level { get; set; }
 
         [JsonPropertyName("score")]
-        public long score { get; set; }
+        public long Score { get; set; }
 
     }
 }

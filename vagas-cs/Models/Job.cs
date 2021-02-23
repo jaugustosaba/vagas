@@ -22,6 +22,10 @@ namespace Vagas.Models {
         [Column("level_id")]
         public long LevelId { get; set; }
 
+        public Level Level { get; set; }
+
+        public Location Location { get; set; }
+
     }
 
 }

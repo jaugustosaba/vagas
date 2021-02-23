@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Vagas.Models;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vagas.Controller
 {
@@ -13,11 +14,11 @@ namespace Vagas.Controller
     public  class VagasController: ControllerBase {
 
         static JsonResult<T> guard<T>(Func<T> action) {
-            // try {
+            try {
                 return new JsonResult<T>(StatusCodes.Status200OK, action.Invoke());
-            // } catch (Exception e) {
-            //     return new JsonResult<T>(StatusCodes.Status500InternalServerError, new List<string>{e.Message});
-            // }
+            } catch (Exception e) {
+                return new JsonResult<T>(StatusCodes.Status500InternalServerError, new List<string>{e.Message});
+            }
         }
 
         static Level GetLevel(VagasContext context, long id) {
@@ -109,7 +110,13 @@ namespace Vagas.Controller
 
         static List<Tuple<Applicant, long>> RankEx(VagasContext context, long jobId) {
             return context.Applications
+                .Include(app => app.Applicant)
+                .Include(app => app.Applicant.Location)
+                .Include(app => app.Applicant.Level)
+                .Include(app => app.Job.Location)
+                .Include(app => app.Job)
                 .Where((app) => app.JobId == jobId)
+                .ToList()
                 .Select((app) => Tuple.Create(app.Applicant, Score(context, app.Job, app.Applicant)))
                 .OrderByDescending((tuple) => tuple.Item2)
                 .ToList();
@@ -162,7 +169,7 @@ namespace Vagas.Controller
             });
         }
 
-        [HttpGet("vagas/{id}/candidaturas/ranking")]
+        [HttpGet("vagas/{jobId}/candidaturas/ranking")]
         public JsonResult<List<ScoreJson>> Rank([FromServices] VagasContext context, [FromRoute] long jobId) {
             return guard(() => {
                 var ranking = RankEx(context, jobId);
@@ -171,7 +178,7 @@ namespace Vagas.Controller
                     Profession = tuple.Item1.Profession,
                     Localization = tuple.Item1.Location.Name,
                     Level = tuple.Item1.Level.Id,
-                    score = tuple.Item2,
+                    Score = tuple.Item2,
                 }).ToList();
             });
         }

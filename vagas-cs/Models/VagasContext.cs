@@ -19,8 +19,14 @@ namespace Vagas.Models {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Application>()
-                .HasKey(c => new { c.ApplicantId, c.JobId });
+            var app = modelBuilder.Entity<Application>();
+            app.HasKey(c => new { c.ApplicantId, c.JobId });
+            app.Navigation(app => app.Job);
+            app.Navigation(app => app.Applicant);
+            
+            
+            modelBuilder.Entity<Distance>()
+                .HasKey(c => new { c.FromLocationId, c.ToLocationId });
         }
 
     }
